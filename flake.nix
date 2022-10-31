@@ -2,9 +2,10 @@
   inputs = {
     nixpkgs.url = github:NixOS/nixpkgs/nixpkgs-unstable;
     rust-overlay.url = "github:oxalica/rust-overlay";
+    nur.url = github:polygon/nur.nix;
   };
 
-  outputs = { self, rust-overlay, nixpkgs }:
+  outputs = { self, rust-overlay, nixpkgs, nur }:
     let
       overlays = [ (import rust-overlay) ];
       pkgs = import nixpkgs {
@@ -23,6 +24,7 @@
         lld
         clang
         cargo-geiger
+        nur.packages.x86_64-linux.wasm-server-runner
       ];
       runtime-deps = with pkgs; [
         alsa-lib
