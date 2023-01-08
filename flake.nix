@@ -48,6 +48,7 @@
             mold
             clang
             makeWrapper
+            lld
           ];
           runtime-deps = with pkgs; [
             alsa-lib
