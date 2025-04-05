@@ -8,7 +8,7 @@ edition = "2021"
 [dependencies]
 
 [target.'cfg(target_arch = "wasm32")'.dependencies]
-bevy = { version = "0.9.1", features = [] }
+bevy = { version = "0.15.3", features = [] }
 
 [target.'cfg(not(target_arch = "wasm32"))'.dependencies]
-bevy = { version = "0.9.1", features = ["dynamic"] }
+bevy = { version = "0.15.3", features = ["dynamic_linking"] }
