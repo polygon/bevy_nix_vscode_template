@@ -1,6 +1,6 @@
 {
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.11";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.05";
     rust-overlay.url = "github:oxalica/rust-overlay";
     nur.url = "github:polygon/nur.nix";
     naersk.url = "github:nix-community/naersk";
@@ -78,7 +78,7 @@
                   --prefix LD_LIBRARY_PATH : ${
                     pkgs.lib.makeLibraryPath runtime-deps
                   } \
-                  --set CARGO_MANIFEST_DIR $out/share/bevy_nix_vscode_template
+                  --set CARGO_MANIFEST_DIR $out/share/${program_name}
                 mkdir -p $out/share/${program_name}
                 cp -a assets $out/share/${program_name}'';
               patchPhase = ''

@@ -19,13 +19,13 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
     // Camera
     commands.spawn((
         Camera2d,
-        OrthographicProjection {
+        Projection::Orthographic(OrthographicProjection {
             scaling_mode: ScalingMode::AutoMin {
                 min_width: 1.0,
                 min_height: 1.0,
             },
             ..OrthographicProjection::default_2d()
-        },
+        }),
     ));
 
     // Sprite
