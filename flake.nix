@@ -1,29 +1,24 @@
 {
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.05";
-    rust-overlay.url = "github:oxalica/rust-overlay";
-    nur.url = "github:polygon/nur.nix";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.11";
+    rust-overlay.url = "github:oxalica/rust-overlay/stable";
+    wasm-server-runner.url = "github:polygon/wasm-server-runner";
     naersk.url = "github:nix-community/naersk";
   };
 
-  outputs = { self, rust-overlay, nixpkgs, nur, naersk }:
+  outputs = { self, rust-overlay, nixpkgs, wasm-server-runner, naersk }:
     let
       systems = [ "aarch64-linux" "i686-linux" "x86_64-linux" ];
       overlays = [ (import rust-overlay) ];
       program_name = "bevy_nix_vscode_template";
+      version = "0.18.0";
     in builtins.foldl' (outputs: system:
 
       let
         overlays = [ (import rust-overlay) ];
         pkgs = import nixpkgs { inherit overlays system; };
 
-        # Using a nightly beyond 1.85 currently segfaults bevy binaries for me
-        #        rust-bin = pkgs.rust-bin.selectLatestNightlyWith (toolchain:
-        #          toolchain.default.override {
-        #            targets = [ "wasm32-unknown-unknown" ];
-        #            extensions = [ "rust-src" ];
-        #          });
-        rust-bin = pkgs.rust-bin.nightly."2025-01-01".default.override {
+        rust-bin = pkgs.rust-bin.stable.latest.default.override {
           targets = [ "wasm32-unknown-unknown" ];
           extensions = [ "rust-src" ];
         };
@@ -37,8 +32,8 @@
           rustfmt
           lldb
           cargo-geiger
-          nur.packages.${system}.wasm-server-runner
           renderdoc
+          wasm-server-runner.packages.${system}.wasm-server-runner
         ];
         build-deps = with pkgs; [ pkg-config mold clang makeWrapper lld ];
         runtime-deps = with pkgs; [
@@ -53,6 +48,8 @@
           vulkan-loader
           vulkan-headers
           libxkbcommon
+          kdePackages.wayland.dev
+          kdePackages.wayland.out
         ];
       in {
         devShell.${system} = let
@@ -70,6 +67,7 @@
           app = naersk-lib.buildPackage {
             pname = program_name;
             root = ./.;
+            inherit version;
             buildInputs = runtime-deps;
             nativeBuildInputs = build-deps;
             overrideMain = attrs: {
@@ -82,7 +80,7 @@
                 mkdir -p $out/share/${program_name}
                 cp -a assets $out/share/${program_name}'';
               patchPhase = ''
-                sed -i s/\"dynamic\"// Cargo.toml
+                sed -i s/\"dynamic_linking\"// Cargo.toml
               '';
             };
           };
@@ -95,7 +93,7 @@
         apps.${system}.wasm = {
           type = "app";
           program = "${pkgs.writeShellScript "wasm-run" "${
-              nur.packages.${system}.wasm-server-runner
+              wasm-server-runner.packages.${system}.wasm-server-runner
             }/bin/wasm-server-runner ${
               self.packages.${system}.wasm
             }/bin/${program_name}.wasm"}";

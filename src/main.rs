@@ -1,7 +1,7 @@
 use bevy::{
+    camera::ScalingMode,
     diagnostic::{FrameTimeDiagnosticsPlugin, LogDiagnosticsPlugin},
     prelude::*,
-    render::camera::ScalingMode,
 };
 fn main() {
     App::new()
