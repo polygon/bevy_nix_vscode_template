@@ -1,6 +1,6 @@
 {
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.11";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-26.05";
     rust-overlay.url = "github:oxalica/rust-overlay/stable";
     wasm-server-runner.url = "github:polygon/wasm-server-runner";
     naersk.url = "github:nix-community/naersk";
@@ -11,7 +11,7 @@
       systems = [ "aarch64-linux" "i686-linux" "x86_64-linux" ];
       overlays = [ (import rust-overlay) ];
       program_name = "bevy_nix_vscode_template";
-      version = "0.19.0";
+      version = "0.20.0";
     in builtins.foldl' (outputs: system:
 
       let
